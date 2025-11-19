@@ -45,6 +45,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+Console.WriteLine("JWT_KEY from env: " + Environment.GetEnvironmentVariable("JWT_KEY"));
+Console.WriteLine("Jwt:Key from config: " + builder.Configuration["Jwt:Key"]);
+
 // JWT configuration
 // Try common env var shapes and configuration key. Some hosts set "Jwt__Key" (double-underscore) for "Jwt:Key".
 var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY")
