@@ -1,16 +1,23 @@
-using System.Text;
+using coverLetter.AuthService.api.Data;
+using coverLetter.AuthService.api.DTOs;
+using coverLetter.AuthService.api.Models;
+using coverLetter.AuthService.api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
-using coverLetter.AuthService.api.Data;
-using coverLetter.AuthService.api.Models;
-using coverLetter.AuthService.api.DTOs;
-using coverLetter.AuthService.api.Services;
+using System.Collections;
 using System.Security.Claims;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+foreach (DictionaryEntry env in Environment.GetEnvironmentVariables())
+{
+    Console.WriteLine($"{env.Key} = {env.Value}");
+}
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
