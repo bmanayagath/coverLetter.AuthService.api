@@ -50,11 +50,18 @@ Console.WriteLine("Jwt:Key from config: " + builder.Configuration["Jwt:Key"]);
 
 // JWT configuration
 // Try common env var shapes and configuration key. Some hosts set "Jwt__Key" (double-underscore) for "Jwt:Key".
-var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY")
-             ?? builder.Configuration["Jwt:Key"];
+var jwtKey =
+    Environment.GetEnvironmentVariable("JWT_KEY")           // explicit JWT_KEY
+    ?? Environment.GetEnvironmentVariable("Jwt__Key")       // explicit Jwt__Key
+    ?? builder.Configuration["Jwt:Key"];                    // config mapping
+
+Console.WriteLine("JWT_KEY from env: " + Environment.GetEnvironmentVariable("JWT_KEY"));
+Console.WriteLine("Jwt__Key from env: " + Environment.GetEnvironmentVariable("Jwt__Key"));
+Console.WriteLine("Jwt:Key from config: " + builder.Configuration["Jwt:Key"]);
 
 if (string.IsNullOrWhiteSpace(jwtKey))
     throw new Exception("JWT_KEY env var, Jwt__Key env var, or Jwt:Key config is required (tried JWT_KEY, Jwt__Key, appsettings.json)");
+
 
 var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 builder.Services.AddAuthentication(options =>
