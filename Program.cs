@@ -48,7 +48,6 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 // JWT configuration
 // Try common env var shapes and configuration key. Some hosts set "Jwt__Key" (double-underscore) for "Jwt:Key".
 var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY")
-             ?? Environment.GetEnvironmentVariable("Jwt__Key")
              ?? builder.Configuration["Jwt:Key"];
 
 if (string.IsNullOrWhiteSpace(jwtKey))
