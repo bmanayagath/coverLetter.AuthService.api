@@ -154,4 +154,6 @@ app.MapGet("/api/auth/me", [Authorize] async (ClaimsPrincipal userPrincipal, Use
 })
 .WithName("Me");
 
+app.MapGet("/", () => "Auth API is running");
+
 app.Run();
