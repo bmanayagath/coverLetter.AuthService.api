@@ -12,11 +12,41 @@ using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Read allowed CORS origins from configuration (appsettings / env vars)
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? Array.Empty<string>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", policy =>
+    {
+        if (allowedOrigins.Length == 0)
+        {
+            // No origins configured => allow any origin (convenient for local/dev).
+            // In production you should provide explicit origins in configuration.
+            policy.AllowAnyOrigin()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        }
+        else if (allowedOrigins.Length == 1 && allowedOrigins[0] == "*")
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        }
+        else
+        {
+            policy.WithOrigins(allowedOrigins)
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        }
+    });
+});
 
 // Connection string helper (supports Railway DATABASE_URL)
 string GetConnectionString()
@@ -56,7 +86,6 @@ var jwtKey =
 if (string.IsNullOrWhiteSpace(jwtKey))
     throw new Exception("JWT_KEY env var, Jwt__Key env var, or Jwt:Key config is required (tried JWT_KEY, Jwt__Key, appsettings.json)");
 
-
 var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 builder.Services.AddAuthentication(options =>
 {
@@ -76,8 +105,6 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<ITokenService, TokenService>();
-
-
 
 var app = builder.Build();
 
@@ -105,6 +132,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Use CORS before authentication/authorization so preflight responses include CORS headers
+app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
