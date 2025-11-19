@@ -58,9 +58,9 @@ Console.WriteLine("Jwt:Key from config: " + builder.Configuration["Jwt:Key"]);
 // JWT configuration
 // Try common env var shapes and configuration key. Some hosts set "Jwt__Key" (double-underscore) for "Jwt:Key".
 var jwtKey =
-    Environment.GetEnvironmentVariable("JWT_KEY")           // explicit JWT_KEY
-    ?? Environment.GetEnvironmentVariable("Jwt__Key")       // explicit Jwt__Key
-    ?? builder.Configuration["Jwt:Key"];                    // config mapping
+    Environment.GetEnvironmentVariable("JWT_KEY")           
+    ?? Environment.GetEnvironmentVariable("Jwt__Key")       
+    ?? builder.Configuration["Jwt:Key"];                    
 
 Console.WriteLine("JWT_KEY from env: " + Environment.GetEnvironmentVariable("JWT_KEY"));
 Console.WriteLine("Jwt__Key from env: " + Environment.GetEnvironmentVariable("Jwt__Key"));
