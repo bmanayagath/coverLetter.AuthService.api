@@ -95,8 +95,20 @@ var app = builder.Build();
 // Ensure DB migrated on startup
 using (var scope = app.Services.CreateScope())
 {
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
+    try
+    {
+        db.Database.Migrate();
+    }
+    catch (InvalidOperationException ex) when (ex.Message.Contains("PendingModelChangesWarning"))
+    {
+        // Log detailed diagnostics and continue (temporary)
+        logger.LogError(ex, "Pending EF Core model changes detected. Create a migration and apply it. See dotnet ef migrations add ...");
+        // Optionally rethrow in non-development environments:
+        if (!app.Environment.IsDevelopment())
+            throw;
+    }
 }
 
 if (app.Environment.IsDevelopment())
