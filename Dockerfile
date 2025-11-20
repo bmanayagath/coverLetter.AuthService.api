@@ -16,10 +16,6 @@ WORKDIR /app
 
 COPY --from=build /app ./
 
-# Provide a sane default for PORT and bind to all interfaces
-ENV PORT=80
-ENV ASPNETCORE_URLS=http://0.0.0.0:${PORT}
-
-EXPOSE 80
+EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "coverLetter.AuthService.api.dll"]
