@@ -248,6 +248,8 @@ app.MapGet("/api/auth/google-login", async (HttpContext httpContext) =>
     if (string.IsNullOrEmpty(redirectUri))
         redirectUri = frontendPopupUrl;
 
+    Console.WriteLine($"Google login requested, redirectUri: {redirectUri}");
+
     var props = new AuthenticationProperties
     {
         RedirectUri = $"/api/auth/google-callback?redirectUri={Uri.EscapeDataString(redirectUri)}"
