@@ -31,6 +31,9 @@ var frontendPopupUrl = builder.Configuration["Frontend:PopupCompleteUrl"]
     ?? Environment.GetEnvironmentVariable("FRONTEND_POPUP_COMPLETE_URL")
     ?? "http://localhost:4200/auth/popup-complete";
 
+Console.WriteLine($"apiBaseUrl {apiBaseUrl}");
+Console.WriteLine($"frontendPopupUrl {frontendPopupUrl}");
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
