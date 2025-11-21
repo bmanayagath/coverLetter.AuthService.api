@@ -3,7 +3,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Identity;
 using coverLetter.AuthService.api.Models;
 
@@ -27,9 +26,19 @@ public class TokenService : ITokenService
 
         var claims = new List<Claim>
         {
+            // IdentityUser.Id is used as the primary subject (usually a GUID string)
             new Claim(JwtRegisteredClaimNames.Sub, user.Id ?? ""),
             new Claim(JwtRegisteredClaimNames.Email, user.Email ?? "")
         };
+
+        // Add explicit GUID claim based on ASP.NET Identity Id
+        if (!string.IsNullOrEmpty(user.Id))
+        {
+            if (Guid.TryParse(user.Id, out var parsedGuid))
+                claims.Add(new Claim("user_guid", parsedGuid.ToString()));
+            else
+                claims.Add(new Claim("user_guid", user.Id));
+        }
 
         roles ??= await _userManager.GetRolesAsync(user);
         foreach (var r in roles)
