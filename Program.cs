@@ -255,7 +255,9 @@ app.MapGet("/api/auth/google-login", async (HttpContext httpContext) =>
         RedirectUri = $"/api/auth/google-callback?redirectUri={Uri.EscapeDataString(redirectUri)}"
     };
 
-    await httpContext.ChallengeAsync("Google", props);
+    return Results.Ok(new { redirectUri });
+
+  //  await httpContext.ChallengeAsync("Google", props);
 });
 
 
